@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:sqflite_app/helpers/database_helper.dart';
 import 'package:sqflite_app/models/contato.dart';
+import 'package:sqflite_app/pages/contato_page.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -18,10 +19,10 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
 
-    // Contato c = Contato(1, "Lucas", "lucas@email.com", "lucas.png");
+    // Contato c = Contato(1, "Lucas", "lucas@email.com", null);
     // db.insertContato(c);
 
-    // Contato c1 = Contato(2, "Fernando", "fernando@email.com", "fernando.png");
+    // Contato c1 = Contato(2, "Fernando", "fernando@email.com", null);
     // db.insertContato(c1);
 
     // // Retornando os contatos
@@ -29,6 +30,10 @@ class _HomePageState extends State<HomePage> {
     //   print(lista);
     // });
 
+    _exibeTodosContatos();
+  }
+
+  void _exibeTodosContatos() {
     // Obtendo a lista de contatos
     db.getContatos().then((lista) {
       setState(() {
@@ -49,7 +54,9 @@ class _HomePageState extends State<HomePage> {
       backgroundColor: Colors.white,
       floatingActionButton: FloatingActionButton(
         backgroundColor: Colors.green,
-        onPressed: () {},
+        onPressed: () {
+          _exibeContatoPage();
+        },
         child: Icon(Icons.add),
       ),
       body: ListView.builder(
@@ -69,6 +76,7 @@ class _HomePageState extends State<HomePage> {
         child: Padding(
           padding: EdgeInsets.all(10.0),
           child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: <Widget>[
               Container(
                 width: 70.0,
@@ -99,11 +107,77 @@ class _HomePageState extends State<HomePage> {
                     ),
                   ],
                 ),
-              )
+              ),
+              IconButton(
+                  icon: Icon(Icons.delete),
+                  onPressed: () {
+                    _confirmaExclusao(context, contatos[index].id, index);
+                  }),
             ],
           ),
         ),
       ),
+      onTap: () {
+        _exibeContatoPage(contato: contatos[index]);
+      },
     );
+  }
+
+  void _exibeContatoPage({Contato contato}) async {
+    final contatoRecebido = await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => ContatatoPage(
+          contato: contato,
+        ),
+      ),
+    );
+
+    // Clicou no botão "salvar" e está realizando uma inclusão ou edição
+    if (contatoRecebido != null) {
+      // Atualizando os dados do contato
+      if (contato != null) {
+        await db.updateContato(contatoRecebido);
+      }
+      // Inserindo um novo contato
+      else {
+        await db.insertContato(contatoRecebido);
+      }
+      // Atualizando a lista de contato que será exibida
+      _exibeTodosContatos();
+    }
+  }
+
+  // Alerta para confirmação de exclusão do contato selecionado
+  void _confirmaExclusao(BuildContext context, int contatoid, index) {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: new Text("Excluir contato"),
+            content: new Text("Deseja excluir o contato ?"),
+            actions: <Widget>[
+              new TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: new Text("Cancelar"),
+              ),
+              new ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  primary: Colors.red,
+                ),
+                onPressed: () {
+                  setState(() {
+                    contatos.removeAt(index);
+                    db.deleteContato(contatoid);
+                  });
+                  Navigator.of(context).pop();
+                },
+                child: new Text("Excluir"),
+              )
+            ],
+          );
+        });
   }
 }

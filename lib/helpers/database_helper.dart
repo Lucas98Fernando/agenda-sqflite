@@ -46,7 +46,7 @@ class DatabaseHelper {
     // Caminho da pasta que será criado/salvo o banco de dados, serve tanto para o Android, como IOS
     Directory directory = await getApplicationDocumentsDirectory();
     // Caminho completo
-    String path = directory.path + 'contatos.db';
+    String path = directory.path + 'contatosDB.db';
 
     // Método para abrir o banco de dados, passando o caminho, a versão e o método de criação
     // Obs: A versão é opcional
