@@ -34,6 +34,19 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  flutter_native_splash: ^0.2.8
+  flutter_launcher_icons: "0.7.3"
+
+flutter_native_splash:
+  color: "#F0FFF0"
+  image: assets/images/agenda.png
+  android: true
+  ios: true
+
+flutter_icons:
+  image_path: "assets/images/agenda.png"
+  android: true
+  ios: true
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
