@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:sqflite_app/models/contato.dart';
+import 'package:image_picker/image_picker.dart';
 
 class ContatatoPage extends StatefulWidget {
   final Contato contato;
@@ -76,6 +77,17 @@ class _ContatatoPageState extends State<ContatatoPage> {
                   ),
                 ),
               ),
+              // Pegando a imagem da galeria do usuário
+              onTap: () {
+                ImagePicker.pickImage(source: ImageSource.gallery).then((file) {
+                  // Se ele clicar pra trocar, mas não selecionar nenhuma imagem, então retorna...
+                  if (file == null) return;
+                  // Se selecionou a imagem, altera o estado
+                  setState(() {
+                    _editaContato.imagem = file.path;
+                  });
+                });
+              },
             ),
             TextField(
               controller: _nomeController,
