@@ -28,7 +28,7 @@ class _ContatatoPageState extends State<ContatatoPage> {
 
     // Se for contato for null, então será feito a inclusão, se não, será feito a edição
     if (widget.contato == null) {
-      _editaContato = Contato(0, '', '', null);
+      _editaContato = Contato(null, '', '', null);
     } else {
       _editaContato = Contato.fromMap(widget.contato.toMap());
 
